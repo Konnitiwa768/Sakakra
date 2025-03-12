@@ -1,0 +1,20 @@
+# 邪悪なポーションを入手するコマンド
+command /get potion_aku:
+    permission: op
+    trigger:
+        set {_potion} to splash potion of water
+        set name of {_potion} to "&c邪悪なポーション"
+        set lore of {_potion} to "&7飲むと悪い効果が付与される"
+        give player {_potion}
+        send "&c☠ 邪悪なポーションを手に入れた！" to player
+
+# 邪悪なポーションを飲むと5つのデバフがつく
+on consume:
+    player is holding a potion
+    name of player's tool is "&c邪悪なポーション"
+    apply blindness to player for 60 seconds
+    apply slowness 2 to player for 60 seconds
+    apply mining fatigue 2 to player for 60 seconds
+    apply weakness 2 to player for 60 seconds
+    apply hunger 2 to player for 60 seconds
+    send "&c☠ 邪悪なポーションの効果が発動！" to player
