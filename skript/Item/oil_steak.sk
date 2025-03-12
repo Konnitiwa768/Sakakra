@@ -1,0 +1,18 @@
+# 油ステーキを入手するコマンド
+command /get oil_steak:
+    permission: op
+    trigger:
+        set {_steak} to cooked beef
+        set name of {_steak} to "&6油ステーキ"
+        set lore of {_steak} to "&7満腹度が回復し、耐性がつく"
+        give player {_steak}
+        send "&6🥩 油ステーキを手に入れた！" to player
+
+# 油ステーキを食べると満腹度回復＆耐性
+on consume:
+    player is holding cooked beef
+    name of player's tool is "&6油ステーキ"
+    set food level of player to 20
+    apply saturation to player for 10 seconds
+    apply resistance 1 to player for 10 seconds
+    send "&6🥩 油ステーキの効果が発動！" to player
