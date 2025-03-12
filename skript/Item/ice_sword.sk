@@ -1,0 +1,18 @@
+# 氷の剣を入手するコマンド
+command /get ice_sword:
+    permission: op
+    trigger:
+        set {_sword} to iron sword
+        set name of {_sword} to "&bIce Sword"
+        set lore of {_sword} to "&7冷気をまとった剣"
+        set {_sword}'s custom model data to 1002
+        give player {_sword}
+        send "&b❄ 氷の剣を手に入れた！" to player
+
+# 氷の剣で攻撃すると相手が鈍化 IV に
+on damage:
+    attacker is a player
+    tool of attacker is a iron sword
+    name of tool of attacker is "&bIce Sword"
+    apply slowness 4 to victim for 3 seconds
+    send "&b❄ 氷の力が発動！" to attacker
