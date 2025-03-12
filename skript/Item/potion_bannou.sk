@@ -1,0 +1,20 @@
+# 万能ポーションを入手するコマンド
+command /get potion_bannou:
+    permission: op
+    trigger:
+        set {_potion} to splash potion of water
+        set name of {_potion} to "&d万能ポーション"
+        set lore of {_potion} to "&7飲むと5つの良い効果が付与される"
+        give player {_potion}
+        send "&d✨ 万能ポーションを手に入れた！" to player
+
+# 万能ポーションを飲むと5つのエフェクトがつく
+on consume:
+    player is holding a potion
+    name of player's tool is "&d万能ポーション"
+    apply regeneration 2 to player for 60 seconds
+    apply speed 2 to player for 60 seconds
+    apply jump boost 2 to player for 60 seconds
+    apply resistance 1 to player for 60 seconds
+    apply luck 1 to player for 60 seconds
+    send "&d✨ 万能ポーションの効果が発動！" to player
