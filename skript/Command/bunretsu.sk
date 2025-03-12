@@ -1,0 +1,21 @@
+command /bunretsu <number> <number> <number> <number>:
+    permission: op
+    trigger:
+        set {_x} to arg-1
+        set {_y} to arg-2
+        set {_z} to arg-3
+        set {_dist} to arg-4
+        
+        set {_block} to block at location({_x}, {_y}, {_z})
+        if {_block} is air:
+            send "&cエラー: そこにブロックはありません！" to player
+            stop
+        
+        set {_newLoc1} to location({_x} + {_dist}, {_y}, {_z})
+        set {_newLoc2} to location({_x} - {_dist}, {_y}, {_z})
+        
+        set block at {_newLoc1} to {_block}
+        set block at {_newLoc2} to {_block}
+        set block at location({_x}, {_y}, {_z}) to air
+        
+        send "&e🧱 ブロックが分裂した！" to player
