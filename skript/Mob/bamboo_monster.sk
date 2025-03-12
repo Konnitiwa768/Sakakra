@@ -1,0 +1,29 @@
+# 竹モンスターを召喚するコマンド
+command /summonbamboo:
+    permission: op
+    trigger:
+        spawn a zombie at location of player
+        set {_mob} to last spawned entity
+        set name of {_mob} to "竹モンスター"
+        set glowing of {_mob} to true
+        set max health of {_mob} to 25
+        heal {_mob}
+        apply resistance 1 to {_mob} for 99999 seconds
+        send "&a竹モンスターを召喚しました！" to player
+
+# 竹モンスターの攻撃時に「spike」タグ付きの竹を落とす
+on damage:
+    attacker is a zombie
+    name of attacker is "竹モンスター"
+    victim is a player
+    drop bamboo named "&6Spiked Bamboo" with lore "&7竹モンスターの棘付き竹" at victim's location
+    deal 7 damage to victim
+
+# 竹モンスターを倒すとカスタムヘッドをドロップ
+on death of zombie:
+    name of victim is "竹モンスター"
+    set {_head} to a new player head
+    set skin of {_head} to "http://textures.minecraft.net/texture/f61bf20c775bcc355ff90828b6fc0f651929a6015f6aa84368037aafa989c8cb"
+    set name of {_head} to "&6Bush"
+    set lore of {_head} to "&7Custom Head ID: 114775", "&9www.minecraft-heads.com"
+    drop {_head} at location of victim
