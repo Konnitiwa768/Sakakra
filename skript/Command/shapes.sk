@@ -1,0 +1,50 @@
+# 球を作るコマンド
+command /sphere <number>:
+    permission: op
+    trigger:
+        set {_radius} to arg-1
+        set {_center} to location of player
+        
+        loop {_radius} times:
+            loop {_radius} times:
+                loop {_radius} times:
+                    set {_x} to random number between -{_radius} and {_radius}
+                    set {_y} to random number between -{_radius} and {_radius}
+                    set {_z} to random number between -{_radius} and {_radius}
+                    
+                    if sqrt({_x}^2 + {_y}^2 + {_z}^2) <= {_radius}:
+                        set block at {_center} + location({_x}, {_y}, {_z}) to stone
+        
+        send "&a🟢 球（半径 {_radius}）を作成しました！" to player
+
+# 正方形を作るコマンド
+command /square <number>:
+    permission: op
+    trigger:
+        set {_size} to arg-1
+        set {_corner} to location of player
+        
+        loop {_size} times:
+            loop {_size} times:
+                set {_x} to loop-number-1 - {_size} / 2
+                set {_z} to loop-number-2 - {_size} / 2
+                
+                set block at {_corner} + location({_x}, 0, {_z}) to stone
+        
+        send "&a🟦 正方形（サイズ {_size}）を作成しました！" to player
+
+# 正三角形を作るコマンド
+command /triangle <number>:
+    permission: op
+    trigger:
+        set {_size} to arg-1
+        set {_corner} to location of player
+        
+        loop {_size} times:
+            loop loop-number-1 times:
+                set {_x} to loop-number-2 - loop-number-1 / 2
+                set {_z} to loop-number-1
+                
+                set block at {_corner} + location({_x}, 0, {_z}) to stone
+        
+        send "&a🔺 正三角形（サイズ {_size}）を作成しました！" to player
