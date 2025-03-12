@@ -1,0 +1,15 @@
+# ファイアソードを入手するコマンド
+command /get fire_sword:
+    permission: op
+    trigger:
+        give player a diamond sword named "&cFire Sword" with lore "&7炎を宿した剣" 
+        send "&6ファイアソードを手に入れた！" to player
+
+# ファイアソードで攻撃すると相手が燃える
+on damage:
+    attacker is a player
+    tool of attacker is a diamond sword
+    name of tool of attacker is "&cFire Sword"
+    apply fire resistance 1 to victim for 3 seconds
+    ignite victim for 3 seconds
+    send "&c🔥 ファイアソードが発動！" to attacker
