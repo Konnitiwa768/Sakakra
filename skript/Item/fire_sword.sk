@@ -2,8 +2,12 @@
 command /get fire_sword:
     permission: op
     trigger:
-        give player a diamond sword named "&cFire Sword" with lore "&7炎を宿した剣" 
-        send "&6ファイアソードを手に入れた！" to player
+        set {_sword} to diamond sword
+        set name of {_sword} to "&cFire Sword"
+        set lore of {_sword} to "&7炎を宿した剣"
+        set {_sword}'s custom model data to 1001
+        give player {_sword}
+        send "&6🔥 ファイアソードを手に入れた！" to player
 
 # ファイアソードで攻撃すると相手が燃える
 on damage:
