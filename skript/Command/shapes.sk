@@ -1,50 +1,94 @@
 # 球を作るコマンド
-command /sphere <number>:
+command /sphere <number> <text>:
     permission: op
     trigger:
         set {_radius} to arg-1
+        set {_block} to arg-2
         set {_center} to location of player
         
-        loop {_radius} times:
-            loop {_radius} times:
-                loop {_radius} times:
-                    set {_x} to random number between -{_radius} and {_radius}
-                    set {_y} to random number between -{_radius} and {_radius}
-                    set {_z} to random number between -{_radius} and {_radius}
+        loop (-{_radius}) to {_radius}:
+            set {_x} to loop-value
+            loop (-{_radius}) to {_radius}:
+                set {_y} to loop-value
+                loop (-{_radius}) to {_radius}:
+                    set {_z} to loop-value
                     
                     if sqrt({_x}^2 + {_y}^2 + {_z}^2) <= {_radius}:
-                        set block at {_center} + location({_x}, {_y}, {_z}) to stone
+                        set block at {_center} + location({_x}, {_y}, {_z}) to {_block}
         
-        send "&a🟢 球（半径 {_radius}）を作成しました！" to player
+        send "&a🟠 球（半径 {_radius}）を {_block} で作成しました！" to player
 
-# 正方形を作るコマンド
-command /square <number>:
+# 立方体を作るコマンド
+command /cube <number> <text>:
     permission: op
     trigger:
         set {_size} to arg-1
+        set {_block} to arg-2
         set {_corner} to location of player
         
         loop {_size} times:
             loop {_size} times:
-                set {_x} to loop-number-1 - {_size} / 2
-                set {_z} to loop-number-2 - {_size} / 2
-                
-                set block at {_corner} + location({_x}, 0, {_z}) to stone
+                loop {_size} times:
+                    set {_x} to loop-number-1 - {_size} / 2
+                    set {_y} to loop-number-2
+                    set {_z} to loop-number-3 - {_size} / 2
+                    
+                    set block at {_corner} + location({_x}, {_y}, {_z}) to {_block}
         
-        send "&a🟦 正方形（サイズ {_size}）を作成しました！" to player
+        send "&a⬛ 立方体（サイズ {_size}）を {_block} で作成しました！" to player
 
-# 正三角形を作るコマンド
-command /triangle <number>:
+# ピラミッドを作るコマンド
+command /pyramid <number> <text>:
     permission: op
     trigger:
         set {_size} to arg-1
+        set {_block} to arg-2
         set {_corner} to location of player
         
         loop {_size} times:
-            loop loop-number-1 times:
-                set {_x} to loop-number-2 - loop-number-1 / 2
-                set {_z} to loop-number-1
-                
-                set block at {_corner} + location({_x}, 0, {_z}) to stone
+            set {_layer} to {_size} - loop-number-1
+            loop {_layer} times:
+                loop {_layer} times:
+                    set {_x} to loop-number-2 - {_layer} / 2
+                    set {_z} to loop-number-3 - {_layer} / 2
+                    
+                    set block at {_corner} + location({_x}, loop-number-1, {_z}) to {_block}
         
-        send "&a🔺 正三角形（サイズ {_size}）を作成しました！" to player
+        send "&a🔺 ピラミッド（高さ {_size}）を {_block} で作成しました！" to player
+
+# 六芒星を作るコマンド
+command /hexagram <number> <text>:
+    permission: op
+    trigger:
+        set {_size} to arg-1
+        set {_block} to arg-2
+        set {_center} to location of player
+        
+        loop 6 times:
+            set {_angle} to loop-number-1 * 60
+            set {_x} to cos({_angle}) * {_size}
+            set {_z} to sin({_angle}) * {_size}
+            set block at {_center} + location({_x}, 0, {_z}) to {_block}
+        
+        send "&a✡ 六芒星（サイズ {_size}）を {_block} で描画しました！" to player
+
+# 星形を作るコマンド
+command /star <number> <text>:
+    permission: op
+    trigger:
+        set {_size} to arg-1
+        set {_block} to arg-2
+        set {_center} to location of player
+        
+        set {_points} to 10
+        loop {_points} times:
+            set {_angle} to loop-number-1 * 36
+            if loop-number-1 mod 2 is 0:
+                set {_r} to {_size} * 0.5
+            else:
+                set {_r} to {_size}
+            set {_x} to cos({_angle}) * {_r}
+            set {_z} to sin({_angle}) * {_r}
+            set block at {_center} + location({_x}, 0, {_z}) to {_block}
+        
+        send "&a⭐ 星形（サイズ {_size}）を {_block} で描画しました！" to player
