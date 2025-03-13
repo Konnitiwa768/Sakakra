@@ -1,0 +1,23 @@
+command /smooth <number> <number> <number> <number> <text>:
+    permission: op
+    trigger:
+        set {_width} to arg-1
+        set {_height} to arg-2
+        set {_depth} to arg-3
+        set {_repeat} to arg-4
+        set {_block} to arg-5
+        set {_start} to location of player
+        
+        loop {_repeat} times:
+            set {_offsetX} to loop-number-1 * {_width}
+            
+            loop {_width} times:
+                set {_x} to loop-number-1
+                loop {_height} times:
+                    set {_y} to loop-number-2
+                    loop {_depth} times:
+                        set {_z} to loop-number-3
+                        
+                        set block at {_start} + location({_x} + {_offsetX}, {_y}, {_z}) to {_block}
+        
+        send "&a🔳 /smooth: {_width}×{_height}×{_depth} のブロックを {_repeat} 回配置しました！（ブロック: {_block}）" to player
