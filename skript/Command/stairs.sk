@@ -1,0 +1,25 @@
+command /stairs <number> <number> <text> <location> <text>:
+    permission: op
+    trigger:
+        set {_height} to arg-1
+        set {_width} to arg-2
+        set {_direction} to arg-3
+        set {_startLoc} to parse location from arg-4
+        set {_block} to arg-5
+        
+        loop {_height} times:
+            set {_y} to loop-number - 1
+            loop {_width} times:
+                set {_x} to loop-number - 1
+                set {_offset} to {_startLoc} + location({_x}, {_y}, 0)
+                
+                if {_direction} is "north":
+                    set block at {_offset} to {_block}
+                else if {_direction} is "south":
+                    set block at {_offset} to {_block}
+                else if {_direction} is "east":
+                    set block at {_offset} to {_block}
+                else if {_direction} is "west":
+                    set block at {_offset} to {_block}
+                    
+        send "&a階段が作成されました！" to player
