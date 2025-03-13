@@ -8,5 +8,9 @@
       "predicate": { "custom_model_data": 1001 },
       "model": "item/fire_sword"
     }
+    {
+      "predicate": { "custom_model_data": 1003 },
+      "model": "item/thunder_sword"
+    }
   ]
 }
