@@ -1,0 +1,17 @@
+command /get thunder_sword:
+    permission: op
+    trigger:
+        set {_sword} to a diamond sword named "&b⚡ Thunder Sword ⚡" with lore "&7雷を落とす剣"
+        set {_sword}'s custom model data to 1003
+        give player {_sword}
+        send "&a⚡ 雷の剣を手に入れた！" to player
+
+on damage:
+    if attacker is a player:
+        if attacker's held item is a diamond sword named "&b⚡ Thunder Sword ⚡":
+            strike lightning at victim
+            send "&e⚡ 雷が落ちた！" to attacker
+            
+            if random number between 1 and 4 is 1: # 25%の確率
+                damage victim by 3
+                send "&c🔥 クリティカルヒット！" to attacker
