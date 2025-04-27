@@ -1,4 +1,4 @@
-command /tooltab101:
+command /tooltab:
     trigger:
         open virtual chest inventory with size 3 rows named "ツール番号101" to player
         
@@ -13,6 +13,10 @@ command /tooltab101:
         # スタンボム
         set {_stunbomb} to lingering potion of slowness 8 named "§9スタンボム" with lore "2分間鈍感VIIIを付与"
         set slot 2 of player's current inventory to {_stunbomb}
+        
+        # プリズムトライデント
+        set {_prism_trident} to trident named "§bプリズムトライデント" with lore "範囲内のエンティティを即死させる！"
+        set slot 3 of player's current inventory to {_prism_trident}
 
 # キル棒の効果：殴ったら即死
 on damage of entity:
@@ -47,3 +51,22 @@ on projectile hit:
     loop entities in radius 3 around projectile:
         loop-entity is a player
         apply slowness 8 to loop-entity for 2 minutes
+
+# プリズムトライデントを投げた時
+on throw of trident:
+    thrown trident is named "§bプリズムトライデント"
+    set {_location} to location of thrown trident
+    # 水色のパーティクルで7x7x7の枠を表示
+    loop 3 times: # 7x7x7の枠を作成
+        loop 3 times:
+            loop 3 times:
+                spawn particle water at {_location} offset by (random number between -3 and 3), (random number between -3 and 3), (random number between -3 and 3)
+    
+    # 0.5秒後にアメジストの罵り音を鳴らし、範囲内のエンティティを即死させる
+    wait 0.5 seconds
+    play sound "block.amethyst_block.break" at {_location}
+    
+    # 範囲内のエンティティのHPを0にする
+    loop entities in radius 3 around {_location}:
+        loop-entity is living entity
+        set health of loop-entity to 0
