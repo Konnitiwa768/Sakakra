@@ -1,0 +1,108 @@
+# --- ボス召喚 ---
+on build:
+    if event-block is snow block:
+        loop blocks within 1 blocks of event-block:
+            if loop-block is iron block:
+                if number of nearby iron blocks within 1 block of event-block is 3:
+                    cancel event
+                    remove event-block and nearby iron blocks
+                    spawn stray at location of event-block
+                    set {_boss} to last spawned entity
+                    set name of {_boss} to "&b氷結の女王・グレイシャ"
+                    set max health of {_boss} to 250
+                    set health of {_boss} to 250
+                    equip {_boss} with diamond helmet, diamond chestplate, diamond leggings and diamond boots
+                    enchant helmet of {_boss} with unbreaking 3
+                    enchant chestplate of {_boss} with unbreaking 3
+                    enchant leggings of {_boss} with unbreaking 3
+                    enchant boots of {_boss} with unbreaking 3
+                    set {_boss} metadata "glacia_boss" to true
+                    create bossbar "&b氷結の女王・グレイシャ" with color blue and style segmented_10
+                    add {_boss} to bossbar
+                    set bossbar visibility of bossbar to true
+
+                    loop all players:
+                        add bossbar to loop-player
+
+# --- 氷のオーラ（常時スロウ） ---
+every 2 seconds:
+    loop all entities:
+        if loop-entity has metadata "glacia_boss":
+            loop players in radius 5 around loop-entity:
+                apply slowness 2 to loop-player for 3 seconds
+
+# --- 火炎ダメージ軽減 ---
+on damage:
+    victim is stray
+    victim has metadata "glacia_boss"
+    if damage cause is fire or fire_tick or lava:
+        damage is multiplied by 0.5
+
+# --- 特技発動（通常モード） ---
+every 8 to 13 seconds:
+    loop all entities:
+        if loop-entity has metadata "glacia_boss":
+            if health of loop-entity > (max health of loop-entity) * 0.3:
+                set {_rand} to random integer between 1 and 3
+                if {_rand} = 1:
+                    # 氷牢結界
+                    loop players in radius 10 around loop-entity:
+                        freeze loop-player for 3 seconds
+                        send title "&b氷牢結界！" to loop-player
+                        stop loop
+                if {_rand} = 2:
+                    # 氷結の雨
+                    loop 20 times:
+                        play particle snowball at location of loop-entity offset by random 4 meters with speed 1
+                    loop players in radius 4 around loop-entity:
+                        damage loop-player by 20
+                        send title "&b氷結の雨！" to loop-player
+                if {_rand} = 3:
+                    # 極寒波
+                    loop players in radius 8 around loop-entity:
+                        apply slowness 4 to loop-player for 5 seconds
+                        apply weakness 1 to loop-player for 5 seconds
+                        send title "&b極寒波！" to loop-player
+
+# --- 特技発動（怒りモード） ---
+every 4 to 6 seconds:
+    loop all entities:
+        if loop-entity has metadata "glacia_boss":
+            if health of loop-entity <= (max health of loop-entity) * 0.3:
+                set {_rand} to random integer between 1 and 3
+                if {_rand} = 1:
+                    loop players in radius 10 around loop-entity:
+                        freeze loop-player for 3 seconds
+                        send title "&b氷牢結界！" to loop-player
+                        stop loop
+                if {_rand} = 2:
+                    loop 20 times:
+                        play particle snowball at location of loop-entity offset by random 4 meters with speed 1
+                    loop players in radius 4 around loop-entity:
+                        damage loop-player by 20
+                        send title "&b氷結の雨！" to loop-player
+                if {_rand} = 3:
+                    loop players in radius 8 around loop-entity:
+                        apply slowness 4 to loop-player for 5 seconds
+                        apply weakness 1 to loop-player for 5 seconds
+                        send title "&b極寒波！" to loop-player
+
+# --- HP50%以下で再生Ⅱ付与 ---
+every 5 seconds:
+    loop all entities:
+        if loop-entity has metadata "glacia_boss":
+            if health of loop-entity <= (max health of loop-entity) * 0.5:
+                apply regeneration 2 to loop-entity for 5 seconds
+
+# --- ドロップ処理 ---
+on death:
+    entity has metadata "glacia_boss"
+    clear drops
+    set {_r} to random number between 0 and 100
+    if {_r} < 77:
+        drop bow named "&b氷結の弓" with power 5, flame 1, infinity 1 at event-location
+    if {_r} < 53:
+        drop diamond helmet named "&b氷の兜" with protection 4, unbreaking 3 at event-location
+    if {_r} < 22.8:
+        drop nether star named "&b氷結の心臓" at event-location
+    delete bossbar
