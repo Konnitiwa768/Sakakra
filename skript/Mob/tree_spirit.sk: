@@ -1,0 +1,43 @@
+command /summon_tree_spirit:
+  trigger:
+    spawn 1 skeleton at player
+    set {_mob} to last spawned entity
+    set name of {_mob} to "木の精霊"
+    set health of {_mob} to 25
+    equip {_mob} with leather boots
+    equip {_mob} with leather leggings
+    equip {_mob} with leather chestplate
+    equip {_mob} with bow
+    set helmet of {_mob} to player head named "葉っぱのヘッド"
+    add tag "tree_spirit" to {_mob}
+
+on shoot:
+  shooter is skeleton
+  shooter has tag "tree_spirit"
+  set {_projectile} to projectile
+  add tag "toxic" to {_projectile}
+  spawn 10 of dust color green particle at {_projectile}
+
+on projectile hit:
+  projectile has tag "toxic"
+  victim is living entity
+  apply potion of poison 2 to victim for 5 seconds
+
+on death of skeleton:
+  if victim has tag "tree_spirit":
+    chance of 24%:
+      drop 1 crimson_fungus at location of victim
+    chance of 24%:
+      drop 1 warped_fungus at location of victim
+    chance of 32%:
+      drop 1 oak_sapling at location of victim
+    chance of 32%:
+      drop 1 birch_sapling at location of victim
+    chance of 32%:
+      drop 1 spruce_sapling at location of victim
+    chance of 32%:
+      drop 1 jungle_sapling at location of victim
+    chance of 32%:
+      drop 1 acacia_sapling at location of victim
+    chance of 32%:
+      drop 1 dark_oak_sapling at location of victim
