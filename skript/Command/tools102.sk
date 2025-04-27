@@ -1,6 +1,6 @@
-command /tooltab:
+command /tooltab102:
     trigger:
-        open virtual chest inventory with size 1 rows named "ツール番号101" to player
+        open virtual chest inventory with size 1 rows named "ツール番号102" to player
         
         # 無敵時間無視剣（ダイヤモンド剣ベース）
         set {_invincible_sword} to diamond sword named "§4無敵時間無視剣" with lore "1'073'741'824ダメージ！無敵時間無視"
