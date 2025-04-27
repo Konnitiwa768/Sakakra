@@ -1,0 +1,46 @@
+command /tooltab102:
+    trigger:
+        open virtual chest inventory with size 1 rows named "ツール番号102" to player
+
+        # 無敵時間無視剣（ダイヤモンド剣ベース）
+        set {_invincible_sword} to diamond sword named "§4無敵時間無視剣" with lore "1'073'741'824ダメージ！無敵時間無視"
+        set nbt tag "Unbreakable" of {_invincible_sword} to 1b  # 耐久値無限
+        set nbt tag "CustomModelData" of {_invincible_sword} to 1101  # プレディケートでテクスチャ指定
+        set slot 0 of player's current inventory to {_invincible_sword}
+
+        # レーザー銃（クロスボウベース）
+        set {_laser_gun} to crossbow named "§4レーザー銃" with lore "自動装填！ダメージ536'870'912"
+        set nbt tag "Unbreakable" of {_laser_gun} to 1b  # 耐久値無限
+        set nbt tag "CustomModelData" of {_laser_gun} to 1102  # プレディケートでテクスチャ指定
+        set slot 1 of player's current inventory to {_laser_gun}
+
+# 無敵時間無視剣でダメージを与える
+on damage of entity:
+    attacker is a player
+    attacker's tool is diamond sword named "§4無敵時間無視剣"
+    set damage of event to 1073741824  # 1'073'741'824ダメージ
+    cancel event  # 無敵時間を無視するためにイベントをキャンセル
+
+# レーザー銃の発射
+on right click with crossbow:
+    player is holding crossbow named "§4レーザー銃"
+    if {laser_gun_enabled.%player%} is not set:
+        set {laser_gun_enabled.%player%} to true
+        loop:
+            if {laser_gun_enabled.%player%} is false:
+                stop
+            shoot arrow with tag "laser" from player's eye location
+            set cooldown of player to 0.1 seconds
+            wait 0.1 seconds
+
+on right click with crossbow:
+    player is holding crossbow named "§4レーザー銃"
+    if {laser_gun_enabled.%player%} is set:
+        remove {laser_gun_enabled.%player%}
+        send "レーザー銃を停止しました。" to player
+
+# laserタグのついた矢にドラゴンブレスエフェクト
+on shoot arrow:
+    arrow has tag "laser"
+    play dragon breath particle at location of arrow
+    set damage of event to 536870912  # ダメージ536'870'912
