@@ -1,0 +1,105 @@
+# --- ボス召喚 ---
+on build:
+    if event-block is soul sand:
+        loop blocks within 1 blocks of event-block:
+            if loop-block is bone block:
+                if number of nearby bone blocks within 1 block of event-block is 3:
+                    cancel event
+                    remove event-block and nearby bone blocks
+                    spawn evoker at location of event-block
+                    set {_boss} to last spawned entity
+                    set name of {_boss} to "&8灰の魔導士・アッシュ"
+                    set max health of {_boss} to 140
+                    set health of {_boss} to 140
+                    apply speed 2 to {_boss} for 9999 days
+                    set {_boss} metadata "ash_boss" to true
+                    create bossbar "&8灰の魔導士・アッシュ" with color gray and style segmented_10
+                    add {_boss} to bossbar
+                    set bossbar visibility of bossbar to true
+
+                    loop all players:
+                        add bossbar to loop-player
+
+# --- ダメージコントロール ---
+on damage:
+    attacker is a player
+    victim is evoker
+    victim has metadata "ash_boss"
+
+    if attack is a projectile:
+        damage is multiplied by 0.5
+    else:
+        damage is multiplied by 1.5
+
+# --- 特技発動 ---
+every 7 to 12 seconds:
+    loop all entities:
+        if loop-entity has metadata "ash_boss":
+            set {_rand} to random integer between 1 and 3
+            if {_rand} = 1:
+                # 灰の嵐
+                loop players in radius 10 around loop-entity:
+                    apply slowness 3 to loop-player for 10 seconds
+                    send title "&7灰の嵐！" to loop-player
+                play particle cloud at loop-entity with speed 1 and count 300
+            if {_rand} = 2:
+                # 影分身
+                if health of loop-entity <= (max health of loop-entity) * 0.3:
+                    loop 3 times:
+                        spawn illusioner at location of loop-entity
+                        set {_clone} to last spawned entity
+                        set name of {_clone} to "&7影分身"
+                        set {_clone} metadata "ash_clone" to true
+                        apply invisibility 1 to {_clone} for 9999 days
+            if {_rand} = 3:
+                # ソウルチャージ
+                apply damage resistance 5 to loop-entity for 5 seconds
+                play particle soul at loop-entity with speed 2 and count 100
+                wait 5 seconds
+                explode loop-entity with force 2 and set fire off
+
+# --- 50%以下で再生Ⅰ付与 ---
+every 5 seconds:
+    loop all entities:
+        if loop-entity has metadata "ash_boss":
+            if health of loop-entity <= (max health of loop-entity) * 0.5:
+                apply regeneration 1 to loop-entity for 5 seconds
+
+# --- 20%以下で発動間隔短縮（高速モード）---
+every 3 to 6 seconds:
+    loop all entities:
+        if loop-entity has metadata "ash_boss":
+            if health of loop-entity <= (max health of loop-entity) * 0.2:
+                # 再度ランダム特技を発動
+                set {_rand} to random integer between 1 and 3
+                if {_rand} = 1:
+                    loop players in radius 10 around loop-entity:
+                        apply slowness 3 to loop-player for 10 seconds
+                        send title "&7灰の嵐！" to loop-player
+                    play particle cloud at loop-entity with speed 1 and count 300
+                if {_rand} = 2:
+                    if health of loop-entity <= (max health of loop-entity) * 0.3:
+                        loop 3 times:
+                            spawn illusioner at location of loop-entity
+                            set {_clone} to last spawned entity
+                            set name of {_clone} to "&7影分身"
+                            set {_clone} metadata "ash_clone" to true
+                            apply invisibility 1 to {_clone} for 9999 days
+                if {_rand} = 3:
+                    apply damage resistance 5 to loop-entity for 5 seconds
+                    play particle soul at loop-entity with speed 2 and count 100
+                    wait 5 seconds
+                    explode loop-entity with force 2 and set fire off
+
+# --- ドロップ処理 ---
+on death:
+    entity has metadata "ash_boss"
+    clear drops
+    set {_r} to random number between 0 and 100
+    if {_r} < 80:
+        drop a bow named "&b魂の弓" with power 5, durability 3, infinity 1 at event-location
+    if {_r} < 45:
+        drop diamond boots named "&bソウルスピードのブーツ" with soul speed 3 at event-location
+    if {_r} < 15:
+        drop nether star named "&7灰の結晶" at event-location
+    delete bossbar
