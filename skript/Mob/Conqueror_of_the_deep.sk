@@ -8,7 +8,7 @@ on place of prismarine block:
                 set name of spawned entity to "§b§l深海の覇者"
                 set max health of spawned entity to 160
                 set health of spawned entity to 160
-                equip spawned entity with wither skeleton skull helmet
+                equip spawned entity with wither skeleton skull
                 equip spawned entity with netherite chestplate
                 equip spawned entity with netherite leggings
                 equip spawned entity with netherite boots
