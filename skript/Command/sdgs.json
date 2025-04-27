@@ -1,0 +1,202 @@
+options:
+  prefix: &a[SDGs] &r
+
+variables:
+  {sdgs.enabled} = false
+  {sdgs.fail::*} = false
+
+command /sdgs <text>:
+  permission: sdgs.toggle
+  permission message: {@prefix}&c権限がありません。
+  trigger:
+    if arg-1 is "on":
+      set {sdgs.enabled} to true
+      broadcast "{@prefix}&aSDGsモードが有効になりました！"
+    else if arg-1 is "off":
+      set {sdgs.enabled} to false
+      broadcast "{@prefix}&cSDGsモードが無効になりました。"
+    else:
+      send "{@prefix}&7使い方: /sdgs <on|off>"
+
+on load:
+  set {sdgs.enabled} to false
+
+# 汎用的な解除
+function sdgs_clear(p: player, id: number):
+  give {_p} diamond 1
+  send "{@prefix}&b素晴らしい行動です！報酬を贈ります。"
+  clear {sdgs.fail::%{_p}%::%{_id}%}
+
+# SDGs 目標1: 貧困をなくそう
+on inventory click:
+  if {sdgs.enabled} is true:
+    if clicked entity is player:
+      set {sdgs.fail::%player%::1} to true
+      send "&c[SDGs目標1] 他人の持ち物を盗んではいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::1} is true:
+        kill player
+        clear {sdgs.fail::%player%::1}
+
+# SDGs 目標2: 飢餓をゼロに
+on item despawn:
+  if {sdgs.enabled} is true:
+    if event-item is food:
+      set {sdgs.fail::%event-entity%::2} to true
+      send "&c[SDGs目標2] 食べ物を無駄にしてはいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%event-entity%::2} is true:
+        kill event-entity
+        clear {sdgs.fail::%event-entity%::2}
+
+# SDGs 目標3: すべての人に健康と福祉を
+every 1 second:
+  loop all players:
+    if {sdgs.enabled} is true:
+      if loop-player's health <= 6:
+        set {sdgs.fail::%loop-player%::3} to true
+        send "&c[SDGs目標3] 体力が少ないときは回復を心がけましょう！"
+        wait 5 seconds
+        if {sdgs.fail::%loop-player%::3} is true:
+          kill loop-player
+          clear {sdgs.fail::%loop-player%::3}
+
+# SDGs 目標4: 質の高い教育をみんなに
+on burn:
+  if {sdgs.enabled} is true:
+    if event-item is written book:
+      set {sdgs.fail::%player%::4} to true
+      send "&c[SDGs目標4] 本を燃やしてはいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::4} is true:
+        kill player
+        clear {sdgs.fail::%player%::4}
+
+# SDGs 目標5: ジェンダー平等を実現しよう
+on damage:
+  if {sdgs.enabled} is true:
+    if victim is villager:
+      set {sdgs.fail::%attacker%::5} to true
+      send "&c[SDGs目標5] 誰に対しても暴力はいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%attacker%::5} is true:
+        kill attacker
+        clear {sdgs.fail::%attacker%::5}
+
+# SDGs 目標6: 安全な水とトイレを世界中に
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is water:
+      set {sdgs.fail::%player%::6} to true
+      send "&c[SDGs目標6] 水源を守りましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::6} is true:
+        kill player
+        clear {sdgs.fail::%player%::6}
+
+# SDGs 目標7: エネルギーをみんなにそしてクリーンに
+on furnace burn:
+  if {sdgs.enabled} is true:
+    if fuel efficiency < 50:
+      set {sdgs.fail::%player%::7} to true
+      send "&c[SDGs目標7] エネルギーを大切に使いましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::7} is true:
+        kill player
+        clear {sdgs.fail::%player%::7}
+
+# SDGs 目標8: 働きがいも経済成長も
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is workstation:
+      set {sdgs.fail::%player%::8} to true
+      send "&c[SDGs目標8] 村人の職場を壊してはいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::8} is true:
+        kill player
+        clear {sdgs.fail::%player%::8}
+
+# SDGs 目標9: 産業と技術革新の基盤をつくろう
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is redstone block or redstone wire or redstone repeater:
+      set {sdgs.fail::%player%::9} to true
+      send "&c[SDGs目標9] 産業の基盤を壊してはいけません！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::9} is true:
+        kill player
+        clear {sdgs.fail::%player%::9}
+
+# SDGs 目標10: 人や国の不平等をなくそう
+on team kill:
+  if {sdgs.enabled} is true:
+    set {sdgs.fail::%attacker%::10} to true
+    send "&c[SDGs目標10] 仲間を大事にしましょう！"
+    wait 5 seconds
+    if {sdgs.fail::%attacker%::10} is true:
+      kill attacker
+      clear {sdgs.fail::%attacker%::10}
+
+# SDGs 目標11: 住み続けられるまちづくりを
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is bed or chest:
+      set {sdgs.fail::%player%::11} to true
+      send "&c[SDGs目標11] 住まいを大切にしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::11} is true:
+        kill player
+        clear {sdgs.fail::%player%::11}
+
+# SDGs 目標12: つくる責任つかう責任
+on item drop:
+  if {sdgs.enabled} is true:
+    set {sdgs.fail::%player%::12} to true
+    send "&c[SDGs目標12] 作ったものは大事にしましょう！"
+    wait 5 seconds
+    if {sdgs.fail::%player%::12} is true:
+      kill player
+      clear {sdgs.fail::%player%::12}
+
+# SDGs 目標13: 気候変動に具体的な対策を
+on ignite:
+  if {sdgs.enabled} is true:
+    set {sdgs.fail::%player%::13} to true
+    send "&c[SDGs目標13] 無駄に火を放たないでください！"
+    wait 5 seconds
+    if {sdgs.fail::%player%::13} is true:
+      kill player
+      clear {sdgs.fail::%player%::13}
+
+# SDGs 目標14: 海の豊かさを守ろう
+on kill:
+  if {sdgs.enabled} is true:
+    if victim is fish or dolphin or turtle:
+      set {sdgs.fail::%attacker%::14} to true
+      send "&c[SDGs目標14] 海の生き物を大切にしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%attacker%::14} is true:
+        kill attacker
+        clear {sdgs.fail::%attacker%::14}
+
+# SDGs 目標15: 陸の豊かさも守ろう
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is log:
+      set {sdgs.fail::%player%::15} to true
+      send "&c[SDGs目標15] 木を切ったら植え直しましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::15} is true:
+        kill player
+        clear {sdgs.fail::%player%::15}
+
+# SDGs 目標16: 平和と公正をすべての人に
+on kill:
+  if {sdgs.enabled} is true:
+    if victim is villager:
+      set {sdgs.fail::%attacker%::16} to true
+      send "&c[SDGs目標16] 村人を大切にしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%attacker%::16} is true:
+        kill attacker
+        clear {sdgs.fail::%attacker%::16}
