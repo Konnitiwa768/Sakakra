@@ -1,0 +1,49 @@
+command /tooltab101:
+    trigger:
+        open virtual chest inventory with size 3 rows named "ツール番号101" to player
+        
+        # キル棒
+        set {_killrod} to blaze rod named "§cキル棒" with lore "殴った敵を即死させる"
+        set slot 0 of player's current inventory to {_killrod}
+        
+        # 最強クロスボウ（ダミー、後で効果付与）
+        set {_crossbow} to crossbow named "§6最強クロスボウ" with lore "32bitの限界ダメージ"
+        set slot 1 of player's current inventory to {_crossbow}
+        
+        # スタンボム
+        set {_stunbomb} to lingering potion of slowness 8 named "§9スタンボム" with lore "2分間鈍感VIIIを付与"
+        set slot 2 of player's current inventory to {_stunbomb}
+
+# キル棒の効果：殴ったら即死
+on damage of entity:
+    attacker is a player
+    attacker's tool is blaze rod named "§cキル棒"
+    set health of victim to 0
+
+# クロスボウに最強花火を装填する（クリックで）
+on inventory click:
+    clicked item is crossbow named "§6最強クロスボウ"
+    # 花火ロケットを作成（最大威力）
+    set {_firework} to firework rocket
+    set nbt compound tag "Fireworks" of {_firework} to nbt compound from "{Flight:3,Explosions:[{Type:1,Colors:[I;11743532],FadeColors:[I;15790320]}]}"
+    
+    # クロスボウに花火を装填
+    set nbt tag "Charged" of clicked item to 1b
+    set nbt tag "ChargedProjectiles" of clicked item to list containing {_firework}
+
+# クロスボウで撃った時、相手に超絶ダメージ
+on shoot:
+    shooter is a player
+    shooter's tool is crossbow named "§6最強クロスボウ"
+    if projectile is a firework rocket:
+        set projectile's damage to 2147483647
+
+# スタンボムを投げた時（ポーション効果で）
+on projectile hit:
+    projectile is lingering potion
+    shooter is a player
+    name of shooter's tool is "§9スタンボム"
+    # ポーション効果の範囲に入ったプレイヤーに鈍感VIIIを2分間付与
+    loop entities in radius 3 around projectile:
+        loop-entity is a player
+        apply slowness 8 to loop-entity for 2 minutes
