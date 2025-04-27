@@ -1,0 +1,16 @@
+command /elemental_shield:
+  trigger:
+    give player 1 shield named "エレメンタルシールド"
+
+on right click with shield named "エレメンタルシールド":
+  if {elemental_shield_cooldown.%player%} is not set:
+    set {elemental_shield_cooldown.%player%} to true
+    send "エレメンタルシールドを発動しました！" to player
+    play sound "block.ender_chest.open" at player
+    spawn particle "barrier" at player
+    apply potion of resistance 1 to player for 10 seconds
+    wait 10 seconds
+    remove {elemental_shield_cooldown.%player%}
+    send "エレメンタルシールドの効果が切れました。" to player
+  else:
+    send "クールダウン中です。再度使用するには少し待ってください。" to player
