@@ -1,0 +1,45 @@
+command /summon_light_spirit:
+  trigger:
+    spawn 1 skeleton at player
+    set {_mob} to last spawned entity
+    set name of {_mob} to "光の精霊"
+    set health of {_mob} to 25
+    equip {_mob} with gold boots
+    equip {_mob} with gold leggings
+    equip {_mob} with gold chestplate
+    equip {_mob} with gold sword
+    set {_head} to skull from base64 "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2Y1ZTIxYjY0YjY2YjE3YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2YjY2In19fQ=="
+    equip {_mob} with {_head} on head
+    add tag "light_spirit" to {_mob}
+
+on shoot:
+  shooter is skeleton
+  shooter has tag "light_spirit"
+  set {_projectile} to projectile
+  add tag "toxic" to {_projectile}
+  spawn 10 of dust color yellow particle at {_projectile}
+
+on projectile hit:
+  projectile has tag "toxic"
+  victim is living entity
+  apply potion of poison 2 to victim for 5 seconds
+  spawn explosion at location of projectile with power 2
+
+on death of skeleton:
+  if victim has tag "light_spirit":
+    chance of 40%:
+      drop 1 diamond at location of victim
+    chance of 9.4%:
+      drop 1 netherite_ingot at location of victim
+    chance of 32%:
+      drop 1 oak_sapling at location of victim
+    chance of 32%:
+      drop 1 birch_sapling at location of victim
+    chance of 32%:
+      drop 1 spruce_sapling at location of victim
+    chance of 32%:
+      drop 1 jungle_sapling at location of victim
+    chance of 32%:
+      drop 1 acacia_sapling at location of victim
+    chance of 32%:
+      drop 1 dark_oak_sapling at location of victim
