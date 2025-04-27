@@ -1,0 +1,90 @@
+# 深海の覇者召喚
+on place of prismarine block:
+    wait 1 tick
+    if prismarine block is below player:
+        if prismarine block is 2 blocks below another prismarine block:
+            if prismarine block is 3 blocks below another prismarine block:
+                spawn drowned at location of event-block
+                set name of spawned entity to "§b§l深海の覇者"
+                set max health of spawned entity to 160
+                set health of spawned entity to 160
+                equip spawned entity with wither skeleton skull helmet
+                equip spawned entity with netherite chestplate
+                equip spawned entity with netherite leggings
+                equip spawned entity with netherite boots
+                enchant helmet of spawned entity with unbreaking 10
+                enchant chestplate of spawned entity with unbreaking 10
+                enchant leggings of spawned entity with unbreaking 10
+                enchant boots of spawned entity with unbreaking 10
+                set {boss.%spawned entity%} to true
+                create boss bar "§9深海の覇者" with 100% progress for all players
+                set {bossbar.%spawned entity%} to last created boss bar
+
+# ボスの技発動 (7-15秒ランダム)
+every 5 seconds:
+    loop all entities:
+        if {boss.%loop-entity%} is set:
+            if loop-entity is alive:
+                set {_interval} to random integer between 7 and 15
+                wait {_interval} seconds
+                if loop-entity is dead:
+                    stop
+                set {_r} to random integer between 1 and 3
+
+                if health of loop-entity <= (max health of loop-entity) * 0.33:
+                    if random integer between 1 and 2 = 1:
+                        set {_r} to 3 # 即死技の優先度を上げる
+
+                if {_r} = 1:
+                    # 水魔法 (矢を飛ばす)
+                    shoot arrow from loop-entity at speed 2
+                    set damage of last shot projectile to 12
+                    send "&b[深海の覇者]&f 水魔法を放った！" to all players
+                else if {_r} = 2:
+                    # ドラウンド召喚
+                    loop (random integer between 4 and 8) times:
+                        spawn drowned at location of loop-entity
+                    send "&b[深海の覇者]&f 手下を召喚した！" to all players
+                else if {_r} = 3:
+                    # 離脱ペナルティ (20秒以内判定)
+                    set {boss.special.%loop-entity%} to true
+                    set {boss.special.start.%loop-entity%} to now
+                    send "&b[深海の覇者]&f 禍々しい力をためている…" to all players
+
+# 離れたら即死
+every 1 second:
+    loop all players:
+        loop all entities:
+            if {boss.special.%loop-entity%} is set:
+                if difference between {boss.special.start.%loop-entity%} and now > 20 seconds:
+                    if distance between loop-player and loop-entity > 15:
+                        send "&c[警告]&f あなたはボスから離れすぎた！"
+                        set health of loop-player to 0
+                        delete {boss.special.%loop-entity%}
+
+# ボスバー更新
+every 1 second:
+    loop all entities:
+        if {boss.%loop-entity%} is set:
+            set {_bar} to {bossbar.%loop-entity%}
+            if loop-entity is alive:
+                set progress of {_bar} to (health of loop-entity) / (max health of loop-entity)
+            else:
+                delete boss bar {_bar}
+                delete {boss.%loop-entity%}
+                delete {bossbar.%loop-entity%}
+
+# ボス撃破時のドロップ
+on death of drowned:
+    if {boss.%event-entity%} is set:
+        cancel drops
+        # 75%でネザライト装備
+        if random chance of 75%:
+            give attacker 1 of random element of (netherite helmet, netherite chestplate, netherite leggings, netherite boots)
+        # 49%でダイヤモンド4〜9個
+        if random chance of 49%:
+            give attacker (random integer between 4 and 9) diamonds
+        # 39%でネザースター1個
+        if random chance of 39%:
+            give attacker 1 nether star
+        broadcast "&b深海の覇者が討伐された！"
