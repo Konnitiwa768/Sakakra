@@ -1,0 +1,158 @@
+options:
+  prefix: &a[SDGs]
+
+# SDGsモード ON/OFFコマンド
+command /sdgs [<text>]:
+  permission: sdgs.toggle
+  trigger:
+    if arg is "on":
+      set {sdgs.enabled} to true
+      send "{@prefix}&a SDGsモードを有効化しました！"
+    else if arg is "off":
+      set {sdgs.enabled} to false
+      send "{@prefix}&c SDGsモードを無効化しました！"
+    else:
+      send "{@prefix}&7 /sdgs on または /sdgs off を入力してください。"
+
+# SDGsクリア関数
+function sdgs_clear(p: player, id: number):
+  clear {sdgs.fail::%{_p}%::%{_id}%}
+  give {_p} diamond 1
+  send "{@prefix}&b素晴らしい行動です！報酬を贈ります。"
+
+# ===== ここから各目標ごとのトリガー =====
+
+# 目標1 貧困をなくそう（所持金0を回避）
+on join:
+  if {sdgs.enabled} is true:
+    if money of player <= 0:
+      set {sdgs.fail::%player%::1} to true
+      send "&c[SDGs目標1] お金がない状態を防ぎましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::1} is true:
+        kill player
+        clear {sdgs.fail::%player%::1}
+
+# 目標2 飢餓をゼロに（空腹回避）
+on hunger level change:
+  if {sdgs.enabled} is true:
+    if hunger level of player <= 6:
+      set {sdgs.fail::%player%::2} to true
+      send "&c[SDGs目標2] 空腹状態を回避しましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::2} is true:
+        kill player
+        clear {sdgs.fail::%player%::2}
+
+# 目標3 すべての人に健康と福祉を（体力低下回避）
+on damage:
+  if {sdgs.enabled} is true:
+    if health of player <= 6:
+      set {sdgs.fail::%player%::3} to true
+      send "&c[SDGs目標3] 体力を保ちましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::3} is true:
+        kill player
+        clear {sdgs.fail::%player%::3}
+
+# 目標4 質の高い教育をみんなに（本を捨てたらNG）
+on item drop:
+  if {sdgs.enabled} is true:
+    if dropped item is book:
+      set {sdgs.fail::%player%::4} to true
+      send "&c[SDGs目標4] 本は大切にしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::4} is true:
+        kill player
+        clear {sdgs.fail::%player%::4}
+
+# 目標5 ジェンダー平等を実現しよう（女性スキン優遇）
+# → 難しいので今回はスキップしておきます（相談で後付け可能）
+
+# 目標6 安全な水とトイレを世界中に（水入りバケツを保持）
+on bucket fill:
+  if {sdgs.enabled} is true:
+    if event-item is water bucket:
+      send "&a[SDGs目標6] 水を確保しました！"
+
+# 目標7 エネルギーをみんなにそしてクリーンに（石炭大量燃やしすぎでNG）
+on smelt:
+  if {sdgs.enabled} is true:
+    if event-item is coal:
+      set {sdgs.fail::%player%::7} to true
+      send "&c[SDGs目標7] 石炭を燃やしすぎないようにしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::7} is true:
+        kill player
+        clear {sdgs.fail::%player%::7}
+
+# 目標8 働きがいも経済成長も（取引をする）
+on trade:
+  if {sdgs.enabled} is true:
+    send "&a[SDGs目標8] 取引を成功させました！"
+
+# 目標9 産業と技術革新の基盤をつくろう（レッドストーンを使用）
+on redstone current change:
+  if {sdgs.enabled} is true:
+    send "&a[SDGs目標9] レッドストーン技術を活用しました！"
+
+# 目標10 人や国の不平等をなくそう（エリトラ使用者を優遇）
+on glide toggle:
+  if {sdgs.enabled} is true:
+    if gliding state is start:
+      send "&a[SDGs目標10] 飛行はみんなに自由を与えます！"
+
+# 目標11 住み続けられるまちづくりを（家を建てたら達成）
+on structure grow:
+  if {sdgs.enabled} is true:
+    send "&a[SDGs目標11] 建物を作り、まちづくりを進めました！"
+
+# 目標12 作る責任 使う責任（クラフト→すぐ捨てたらNG）
+on craft:
+  if {sdgs.enabled} is true:
+    set {sdgs.recently.crafted::%player%::*} to event-item
+    wait 10 seconds
+    delete {sdgs.recently.crafted::%player%::*}
+
+on item drop:
+  if {sdgs.enabled} is true:
+    if dropped item is in {sdgs.recently.crafted::%player%::*}:
+      set {sdgs.fail::%player%::12} to true
+      send "&c[SDGs目標12] 作ったものはすぐ捨てないようにしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::12} is true:
+        kill player
+        clear {sdgs.fail::%player%::12}
+
+# 目標13 気候変動に具体的な対策を（雪玉使用禁止）
+on shoot:
+  if {sdgs.enabled} is true:
+    if projectile is snowball:
+      set {sdgs.fail::%player%::13} to true
+      send "&c[SDGs目標13] 雪を無駄遣いしないようにしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::13} is true:
+        kill player
+        clear {sdgs.fail::%player%::13}
+
+# 目標14 海の豊かさを守ろう（魚を取ったらリリースを推奨）
+on fish:
+  if {sdgs.enabled} is true:
+    send "&a[SDGs目標14] 獲った魚はリリースしましょう！"
+
+# 目標15 陸の豊かさも守ろう（木を切ったら苗木植える）
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is log:
+      set {sdgs.fail::%player%::15} to true
+      send "&c[SDGs目標15] 木を切ったら苗木を植えましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::15} is true:
+        kill player
+        clear {sdgs.fail::%player%::15}
+
+on place:
+  if {sdgs.enabled} is true:
+    if event-block is sapling:
+      if {sdgs.fail::%player%::15} is true:
+        call sdgs_clear(player, 15)
