@@ -1,6 +1,6 @@
 command /tooltab:
     trigger:
-        open virtual chest inventory with size 3 rows named "ツール番号101" to player
+        open virtual chest inventory with size 4 rows named "ツール番号101" to player
         
         # キル棒
         set {_killrod} to blaze rod named "§cキル棒" with lore "殴った敵を即死させる"
