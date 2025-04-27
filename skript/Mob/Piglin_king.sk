@@ -1,0 +1,134 @@
+# ピグリンの王 召喚
+on place of blackstone:
+    wait 1 tick
+    if blackstone is below player:
+        if blackstone is 2 blocks below another blackstone:
+            if blackstone is 3 blocks below another blackstone:
+                spawn piglin at location of event-block
+                set name of spawned entity to "§6§lピグリンの王"
+                set max health of spawned entity to 108
+                set health of spawned entity to 108
+                equip spawned entity with netherite helmet
+                equip spawned entity with netherite chestplate
+                equip spawned entity with netherite leggings
+                equip spawned entity with netherite boots
+                enchant helmet of spawned entity with unbreaking 10
+                enchant chestplate of spawned entity with unbreaking 10
+                enchant leggings of spawned entity with unbreaking 10
+                enchant boots of spawned entity with unbreaking 10
+                set {king.%spawned entity%} to true
+                create boss bar "§6ピグリンの王" with 100% progress for all players
+                set {kingbar.%spawned entity%} to last created boss bar
+                set {king.revive.%spawned entity%} to true
+
+# 外部イベント無効化
+on damage:
+    if {king.%victim%} is set:
+        if attacker is not victim:
+            if attacker is not projectile:
+                cancel event
+
+on potion splash:
+    loop entities in radius 5 around event-entity:
+        if {king.%loop-entity%} is set:
+            cancel event
+
+on ignite:
+    if {king.%entity%} is set:
+        cancel event
+
+# 33%攻撃キャンセル
+on damage:
+    if {king.%attacker%} is set:
+        if random chance of 33%:
+            cancel event
+            send "&6[ピグリンの王]&f は攻撃を無効化した！" to attacker
+
+# 技発動ランダム (7-15秒)
+every 5 seconds:
+    loop all entities:
+        if {king.%loop-entity%} is set:
+            if loop-entity is alive:
+                set {_interval} to random integer between 7 and 15
+                wait {_interval} seconds
+                if loop-entity is dead:
+                    stop
+                set {_r} to random integer between 1 and 3
+
+                if {_r} = 1:
+                    # 遠距離無効化
+                    set {king.skill.ranged.%loop-entity%} to true
+                    send "&6[ピグリンの王]&f は遠距離攻撃を防ぐ力をまとった！" to all players
+                    wait 20 seconds
+                    delete {king.skill.ranged.%loop-entity%}
+                else if {_r} = 2:
+                    # 近接無効化
+                    set {king.skill.melee.%loop-entity%} to true
+                    send "&6[ピグリンの王]&f は近接攻撃を防ぐ力をまとった！" to all players
+                    wait 20 seconds
+                    delete {king.skill.melee.%loop-entity%}
+                else if {_r} = 3:
+                    # 装備破壊
+                    loop all players within 10 meters of loop-entity:
+                        loop "helmet", "chestplate", "leggings", "boots":
+                            if loop-player has loop-value armor:
+                                damage loop-value armor of loop-player by durability of loop-value armor of loop-player
+                                send "&6[ピグリンの王]&f により防具が破壊された！" to loop-player
+                                stop loop
+
+# 遠距離＆近接無効
+on damage:
+    if {king.skill.ranged.%victim%} is set:
+        if projectile:
+            cancel event
+    if {king.skill.melee.%victim%} is set:
+        if attacker is a player:
+            if projectile is not projectile:
+                cancel event
+
+# ボスバー更新
+every 1 second:
+    loop all entities:
+        if {king.%loop-entity%} is set:
+            set {_bar} to {kingbar.%loop-entity%}
+            if loop-entity is alive:
+                set progress of {_bar} to (health of loop-entity) / (max health of loop-entity)
+            else:
+                delete boss bar {_bar}
+                delete {king.%loop-entity%}
+                delete {kingbar.%loop-entity%}
+
+# 死亡時復活処理
+on death of piglin:
+    if {king.%event-entity%} is set:
+        if {king.revive.%event-entity%} is true:
+            cancel drops
+            set {king.revive.%event-entity%} to false
+            spawn piglin at location of event-entity
+            set name of spawned entity to "§6§lピグリンの王(復活)"
+            set max health of spawned entity to 108
+            set health of spawned entity to random integer between 26 and 60
+            equip spawned entity with netherite helmet
+            equip spawned entity with netherite chestplate
+            equip spawned entity with netherite leggings
+            equip spawned entity with netherite boots
+            enchant helmet of spawned entity with unbreaking 10
+            enchant chestplate of spawned entity with unbreaking 10
+            enchant leggings of spawned entity with unbreaking 10
+            enchant boots of spawned entity with unbreaking 10
+            set {king.%spawned entity%} to true
+            create boss bar "§6ピグリンの王(復活)" with 100% progress for all players
+            set {kingbar.%spawned entity%} to last created boss bar
+        else:
+            # 本当に倒したとき
+            cancel drops
+            # 75%：不可壊ダイヤ剣
+            if random chance of 75%:
+                give attacker diamond sword with unbreaking 10
+            # 47%：不可壊ネザライトチェスト
+            if random chance of 47%:
+                give attacker netherite chestplate with unbreaking 10
+            # 22.8%：ドラゴンの卵
+            if random chance of 22.8%:
+                give attacker dragon egg
+            broadcast "&6ピグリンの王が討伐された！"
