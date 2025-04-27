@@ -1,0 +1,94 @@
+# 目標8 働きがいも経済成長も（無駄な資源消費を避ける）
+on inventory click:
+  if {sdgs.enabled} is true:
+    if event-item is coal:
+      if player's inventory contains 128 or more of coal:
+        set {sdgs.fail::%player%::8} to true
+        send "&c[SDGs目標8] 無駄に石炭を使いすぎないようにしましょう！"
+        wait 5 seconds
+        if {sdgs.fail::%player%::8} is true:
+          kill player
+          clear {sdgs.fail::%player%::8}
+
+
+
+# 目標6 安全な水とトイレを世界中に（水源を無駄にする行為）
+on block place:
+  if {sdgs.enabled} is true:
+    if event-block is water:
+      add 1 to {sdgs.water_placed::%player%}
+      if {sdgs.water_placed::%player%} >= 32:
+        set {sdgs.fail::%player%::6} to true
+        send "&c[SDGs目標6] 水源を無駄に使わないようにしましょう！"
+        wait 5 seconds
+        if {sdgs.fail::%player%::6} is true:
+          kill player
+          clear {sdgs.fail::%player%::6}
+          clear {sdgs.water_placed::%player%}
+
+# 目標13 気候変動に具体的な対策を（無駄な炭素排出行為）
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is coal_ore or charcoal_block:
+      set {sdgs.fail::%player%::13} to true
+      send "&c[SDGs目標13] 無駄に炭素を排出しないようにしましょう！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::13} is true:
+        kill player
+        clear {sdgs.fail::%player%::13}
+
+# 目標7 エネルギーをみんなに そしてクリーンに（無駄に電力を消費する行為）
+on block place:
+  if {sdgs.enabled} is true:
+    if event-block is redstone:
+      set {sdgs.fail::%player%::7} to true
+      send "&c[SDGs目標7] 無駄にエネルギーを消費しないでください！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::7} is true:
+        kill player
+        clear {sdgs.fail::%player%::7}
+
+# 目標2 飢餓をゼロに（食べ物を無駄にする行為）
+on item drop:
+  if {sdgs.enabled} is true:
+    if dropped item is food:
+      set {sdgs.fail::%player%::2} to true
+      send "&c[SDGs目標2] 食べ物を無駄にしないでください！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::2} is true:
+        kill player
+        clear {sdgs.fail::%player%::2}
+
+# 目標10 人や国の不平等をなくそう（他プレイヤーに対する無差別な攻撃行為）
+on damage:
+  if {sdgs.enabled} is true:
+    if victim is player:
+      if attacker is player:
+        set {sdgs.fail::%attacker%::10} to true
+        send "&c[SDGs目標10] 他プレイヤーに無差別に攻撃しないでください！"
+        wait 5 seconds
+        if {sdgs.fail::%attacker%::10} is true:
+          kill attacker
+          clear {sdgs.fail::%attacker%::10}
+
+# 目標4 質の高い教育をみんなに（教育用アイテムを無駄に破壊する行為）
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is bookcase or lectern:
+      set {sdgs.fail::%player%::4} to true
+      send "&c[SDGs目標4] 教育用アイテムを無駄に壊さないでください！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::4} is true:
+        kill player
+        clear {sdgs.fail::%player%::4}
+
+# 目標9 産業と技術革新の基盤を作ろう（無駄に機械やテクノロジーを破壊したり使用しない行為）
+on block break:
+  if {sdgs.enabled} is true:
+    if event-block is redstone:
+      set {sdgs.fail::%player%::9} to true
+      send "&c[SDGs目標9] 無駄に技術や機械を破壊しないでください！"
+      wait 5 seconds
+      if {sdgs.fail::%player%::9} is true:
+        kill player
+        clear {sdgs.fail::%player%::9}
