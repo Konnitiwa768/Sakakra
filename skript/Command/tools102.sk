@@ -44,3 +44,4 @@ on shoot arrow:
     arrow has tag "laser"
     play dragon breath particle at location of arrow
     set damage of event to 536870912  # ダメージ536'870'912
+    cancel event  # 無敵時間を無視するためにイベントをキャンセル
