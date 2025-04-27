@@ -1,0 +1,16 @@
+command /warp_glove:
+  trigger:
+    give player 1 iron_sword named "ワープングローブ"
+
+on right click with iron_sword named "ワープングローブ":
+  if {warp_glove_cooldown.%player%} is not set:
+    set {warp_glove_cooldown.%player%} to true
+    set {_loc} to location of player
+    set {_target} to location at cursor
+    teleport player to {_target}
+    play sound "entity.enderman.teleport" at player
+    spawn particle "smoke" at {_loc}
+    wait 5 seconds
+    remove {warp_glove_cooldown.%player%}
+  else:
+    send "ワープ中です。クールダウンを待ってください。" to player
