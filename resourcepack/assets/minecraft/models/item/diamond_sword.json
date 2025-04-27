@@ -11,6 +11,10 @@
     {
       "predicate": { "custom_model_data": 1003 },
       "model": "item/thunder_sword"
+    },
+    {
+      "predicate": { "custom_model_data": 1101 },
+      "model": "item/invincible_sword"
     }
   ]
 }
