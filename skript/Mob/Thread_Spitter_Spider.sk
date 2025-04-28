@@ -1,0 +1,28 @@
+# === 糸吐きグモを召喚するコマンド ===
+command /spawn_thread_spitter:
+  trigger:
+    spawn 1 spider at player
+    set name of last spawned entity to "糸吐きグモ"
+    set max health of last spawned entity to 18
+    set health of last spawned entity to 18
+    set {thread_spitter.%last spawned entity%} to true
+    send "&a糸吐きグモを召喚しました！" to player
+
+# === 糸吐きグモのクモの巣吐き ===
+every 5 seconds:
+  loop all spiders:
+    if name of loop-spider is "糸吐きグモ":
+      loop 5 times:
+        set {_loc} to location of loop-spider
+        add random number between -5 and 5 to x-coordinate of {_loc}
+        add random number between 0 and 2 to y-coordinate of {_loc}
+        add random number between -5 and 5 to z-coordinate of {_loc}
+        if block at {_loc} is air:
+          set block at {_loc} to cobweb
+
+# === 糸吐きグモのドロップ調整 ===
+on death of spider:
+  if name of victim is "糸吐きグモ":
+    cancel drops
+    loop random integer between 2 and 5 times:
+      drop 1 string at location of victim
