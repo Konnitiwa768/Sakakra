@@ -3,8 +3,8 @@ command /spawn_farmer_zombie:
   trigger:
     spawn 1 zombie at player
     set name of last spawned entity to "農民ゾンビ"
-    set max health of last spawned entity to 20
-    set health of last spawned entity to 20
+    set max health of last spawned entity to 24
+    set health of last spawned entity to 24
     equip last spawned entity with chainmail helmet, chainmail chestplate, chainmail leggings
     equip last spawned entity with hoe
     send "&a農民ゾンビを召喚しました！" to player
@@ -17,7 +17,7 @@ on entity damage by player:
         # 50%の確率で盾を構える
         equip entity with shield in offhand of entity
         send "&e農民ゾンビが盾を構えました！" to attacker
-        play sound "entity.zombie.attack_iron_door" at attacker
+        play sound "block.anvil.use" at attacker
         wait 2 seconds
         remove shield from offhand of entity
         send "&e農民ゾンビが盾を下ろしました。" to attacker
@@ -26,6 +26,6 @@ on entity damage by player:
 on entity damage by player:
   if name of entity is "農民ゾンビ":
     if attacker is a player:
-      apply damage 3 to attacker
+      apply damage 5 to attacker
       send "農民ゾンビがクワで攻撃してきた！" to attacker
       play sound "entity.zombie.attack_iron_door" at attacker
