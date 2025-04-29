@@ -1,0 +1,34 @@
+# --- Wither Bow & Healing Stuff Lv1 Skript ---
+
+# --- Wither Bow コマンド入手 & クラフト ---
+
+command /getwitherbow:
+    permission: op
+    trigger:
+        give player bow named "§8Wither Bow" with lore "§7ウィザー効果を与える弓" with durability 771
+
+on script load:
+    register new shaped recipe for bow named "§8Wither Bow" with lore "§7ウィザー効果を与える弓" with durability 771 using:
+        coal block, nether star, coal block,
+        string, bow, string,
+        coal, string, coal
+
+on shoot:
+    shooter is a player
+    projectile is an arrow
+    shooter's tool is bow named "§8Wither Bow"
+    set {witherbow_arrow::%projectile%} to true
+
+every 2 ticks:
+    loop all arrows:
+        if {witherbow_arrow::%loop-entity%} is set:
+            spawn 3 of large smoke particle at loop-entity
+            if loop-entity is on ground or dead:
+                delete {witherbow_arrow::%loop-entity%}
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§8Wither Bow"
+    if projectile is arrow:
+        apply wither 1 to victim for 5 seconds
+        set damage to 7 # 弱めの基礎ダメージ（調整可）
