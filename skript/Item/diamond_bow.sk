@@ -1,0 +1,29 @@
+command /getdiamondbow:
+    permission: op
+    trigger:
+        give player bow named "§bダイヤモンドの弓" with lore "§715ダメージの高威力弓" with durability 995
+
+on script load:
+    register new shaped recipe for bow named "§bダイヤモンドの弓" with lore "§715ダメージの高威力弓" with durability 995 using:
+        diamond, nether star, diamond,
+        string, bow, string,
+        diamond, string, diamond
+
+on shoot:
+    shooter is a player
+    projectile is an arrow
+    shooter's tool is bow named "§bダイヤモンドの弓"
+    set {diamond_arrow::%projectile%} to true
+
+every 2 ticks:
+    loop all arrows:
+        if {diamond_arrow::%loop-entity%} is set:
+            spawn 4 of crit particle at loop-entity
+            if loop-entity is on ground or dead:
+                delete {diamond_arrow::%loop-entity%}
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§bダイヤモンドの弓"
+    if projectile is arrow:
+        set damage to 15
