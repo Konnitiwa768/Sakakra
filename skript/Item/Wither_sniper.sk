@@ -1,0 +1,39 @@
+# --- ウィザースナイパー ---
+
+command /getwithersniper:
+    trigger:
+        give player crossbow named "§8ウィザースナイパー" with lore "§738ダメージ / ウィザーII (10秒) / クールダウン3.85秒"
+
+on script load:
+    register new shaped recipe for crossbow named "§8ウィザースナイパー" with lore "§738ダメージ / ウィザーII (10秒) / クールダウン3.85秒" using:
+        wither rose, netherite ingot, wither rose,
+        blaze powder, crossbow, blaze powder,
+        soul sand, bone block, soul sand
+
+on shoot:
+    shooter is a player
+    shooter's tool is crossbow named "§8ウィザースナイパー"
+    set {withersniper_arrow::%projectile%} to shooter's uuid
+    set {withersniper_cd::%shooter%} to now
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is crossbow named "§8ウィザースナイパー"
+    if projectile is arrow:
+        set {_last} to {withersniper_cd::%attacker%}
+        if difference between now and {_last} < 3.85 seconds:
+            cancel event
+            send "&cクールダウン中です！" to attacker
+        else:
+            set damage to 38
+            apply wither 2 to victim for 10 seconds
+            play sound "entity.generic.explode" at victim
+            set {withersniper_cd::%attacker%} to now
+        delete {withersniper_arrow::%projectile%}
+
+every tick:
+    loop all players:
+        if loop-player's tool is crossbow named "§8ウィザースナイパー":
+            if loop-player is sneaking:
+                apply slowness 3 to loop-player for 1 tick
+                apply night vision 1 to loop-player for 1 tick
