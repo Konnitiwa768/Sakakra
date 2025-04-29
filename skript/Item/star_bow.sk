@@ -1,0 +1,37 @@
+# --- 星弓作成Skript ---
+
+# テスト用コマンド /getstarbow
+command /getstarbow:
+    permission: op
+    trigger:
+        give player bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される"
+
+# スクリプト読み込み時にクラフトレシピ登録
+on script load:
+    register new shaped recipe for bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される" using:
+        stick, nether star, stick,
+        string, bow, string,
+        stick, string, stick
+
+# 矢の直線飛行と水色パーティクル
+on shoot:
+    shooter is a player
+    projectile is an arrow
+    shooter's tool is bow named "§f星弓"
+    set projectile's velocity to vector of projectile's direction multiplied by 3 # 高速直線
+    set {starbow_arrow::%projectile%} to true
+
+# パーティクルを飛行中の矢に表示
+every 2 ticks:
+    loop all arrows:
+        if {starbow_arrow::%loop-entity%} is set:
+            spawn 5 of dust particle with color aqua and size 1 at loop-entity
+            if loop-entity is on ground or dead:
+                delete {starbow_arrow::%loop-entity%}
+
+# ダメージ設定
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§f星弓"
+    if projectile is arrow:
+        set damage to 10
