@@ -27,6 +27,6 @@ on damage of player or mob by projectile:
         set {_x} to {stack_bow_arrow::%projectile%}
         if {_x} is not set:
             set {_x} to 1
-        set {_dmg} to {_x} * (1.15 * {_x})
+        set {_dmg} to 8 * (1.15 * (1.15 * {_x}))
         set damage to {_dmg}
         delete {stack_bow_arrow::%projectile%}
