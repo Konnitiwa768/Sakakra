@@ -1,0 +1,32 @@
+# --- エコーソード作成Skript ---
+
+# テスト用コマンド /getsword （すぐ手に入れる用）
+command /echosword:
+    permission: op
+    trigger:
+        give player diamond sword named "§bエコーソード" with lore "§7残響の欠片から作られた剣", "§7しゃがむと衝撃波を放つ"
+        set durability of player's tool to 1788
+
+# スクリプト読み込み時にクラフトレシピ登録
+on script load:
+    register new shaped recipe for diamond sword named "§bエコーソード" with lore "§7残響の欠片から作られた剣", "§7しゃがむと衝撃波を放つ" and durability 1788 using:
+        iron sword, echo shard, iron sword,
+        echo shard, stick, echo shard,
+        air, stick, air
+
+# エコーソード：しゃがみ衝撃波システム
+every 2 ticks:
+    loop all players:
+        if loop-player is sneaking:
+            if loop-player's tool is diamond sword named "§bエコーソード":
+                if {cooldown::%loop-player%} is not set:
+                    # 周囲5ブロックの敵にダメージ
+                    loop all living entities in radius 5 around loop-player:
+                        if loop-entity is not loop-player:
+                            damage loop-entity by 10
+                    # 爆発音を鳴らす
+                    play sound "entity.generic.explode" at loop-player
+                    # クールダウン設定（2秒間）
+                    set {cooldown::%loop-player%} to true
+                    wait 2 seconds
+                    delete {cooldown::%loop-player%}
