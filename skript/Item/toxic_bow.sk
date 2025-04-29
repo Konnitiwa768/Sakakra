@@ -1,0 +1,33 @@
+# --- 有害な弓（Toxic Bow） ---
+
+command /gettoxicbow:
+    permission: op
+    trigger:
+        give player bow named "§2有害な弓" with lore "§7毒と鈍足を与える弓" with durability 649
+
+on script load:
+    register new shaped recipe for bow named "§2有害な弓" with lore "§7毒と鈍足を与える弓" with durability 649 using:
+        rotten flesh, potion of poison, rotten flesh,
+        string, bow, string,
+        rotten flesh, string, rotten flesh
+
+on shoot:
+    shooter is a player
+    projectile is an arrow
+    shooter's tool is bow named "§2有害な弓"
+    set {toxic_arrow::%projectile%} to true
+
+every 2 ticks:
+    loop all arrows:
+        if {toxic_arrow::%loop-entity%} is set:
+            spawn 4 of spell_mob particle at loop-entity
+            if loop-entity is on ground or dead:
+                delete {toxic_arrow::%loop-entity%}
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§2有害な弓"
+    if projectile is arrow:
+        apply poison 1 to victim for 3 seconds
+        apply slowness 1 to victim for 3 seconds
+        set damage to 5
