@@ -1,0 +1,28 @@
+# --- ファストクロスボウ作成Skript ---
+
+# テスト用コマンド /getfastcrossbow （すぐ手に入れる用）
+command /getfastcrossbow:
+    permission: op
+    trigger:
+        give player crossbow named "§aファストクロスボウ" with lore "§7連射型クロスボウ", "§7超速リロード（0.1秒）"
+
+# スクリプト読み込み時にクラフトレシピ登録
+on script load:
+    register new shaped recipe for crossbow named "§aファストクロスボウ" with lore "§7連射型クロスボウ", "§7超速リロード（0.1秒）" using:
+        stick, feather, stick,
+        feather, crossbow, feather,
+        air, stick, air
+
+# ファストクロスボウ自動リロードシステム
+every 2 ticks:
+    loop all players:
+        if loop-player's tool is crossbow named "§aファストクロスボウ":
+            if loop-player's crossbow isn't loaded:
+                load loop-player's crossbow with arrow
+
+# ファストクロスボウダメージ調整
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is crossbow named "§aファストクロスボウ"
+    if projectile is arrow:
+        set damage to 1.5
