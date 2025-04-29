@@ -3,10 +3,10 @@
 command /gethealingstuff:
     permission: op
     trigger:
-        give player stick named "§aHealing Stuff Lv1" with lore "§7しゃがみ右クリックで回復", "§73秒クールダウン"
+        give player stick named "§aHealing Stuff Lv1" with lore "§7しゃがみ右クリックで回復", "§71.5秒クールダウン"
 
 on script load:
-    register new shaped recipe for stick named "§aHealing Stuff Lv1" with lore "§7しゃがみ右クリックで回復", "§73秒クールダウン" using:
+    register new shaped recipe for stick named "§aHealing Stuff Lv1" with lore "§7しゃがみ右クリックで回復", "§71.5秒クールダウン" using:
         air, gold ingot, air,
         gold ingot, stick, gold ingot,
         air, gold ingot, air
