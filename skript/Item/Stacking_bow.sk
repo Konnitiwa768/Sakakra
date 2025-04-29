@@ -1,0 +1,32 @@
+# --- 段々の弓 ---
+
+command /getstackingbow:
+    trigger:
+        give player bow named "§d段々の弓" with lore "§73秒以内の連射で威力増加"
+
+on script load:
+    register new shaped recipe for bow named "§d段々の弓" with lore "§73秒以内の連射で威力増加" using:
+        quartz, redstone, quartz,
+        string, bow, string,
+        quartz, string, quartz
+
+on shoot:
+    shooter is a player
+    shooter's tool is bow named "§d段々の弓"
+    add 1 to {stack_bow_shots::%shooter%}
+    set {stack_bow_last::%shooter%} to now
+    set {stack_bow_arrow::%projectile%} to {stack_bow_shots::%shooter%}
+    wait 3 seconds
+    if difference between now and {stack_bow_last::%shooter%} > 3 seconds:
+        delete {stack_bow_shots::%shooter%}
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§d段々の弓"
+    if projectile is arrow:
+        set {_x} to {stack_bow_arrow::%projectile%}
+        if {_x} is not set:
+            set {_x} to 1
+        set {_dmg} to {_x} * (1.15 * {_x})
+        set damage to {_dmg}
+        delete {stack_bow_arrow::%projectile%}
