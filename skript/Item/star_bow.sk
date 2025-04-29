@@ -4,11 +4,11 @@
 command /getstarbow:
     permission: op
     trigger:
-        give player bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される"
+        give player bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される" with durability 802
 
 # スクリプト読み込み時にクラフトレシピ登録
 on script load:
-    register new shaped recipe for bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される" using:
+    register new shaped recipe for bow named "§f星弓" with lore "§7星の力を宿した弓", "§7直線に飛び、水色の軌道が表示される" with durability 802 using:
         stick, nether star, stick,
         string, bow, string,
         stick, string, stick
