@@ -1,0 +1,32 @@
+# --- 雷の弓 ---
+
+command /getthunderbow:
+    trigger:
+        give player bow named "§e雷の弓" with lore "§7矢が命中すると雷を落とす"
+
+on script load:
+    register new shaped recipe for bow named "§e雷の弓" with lore "§7矢が命中すると雷を落とす" using:
+        glowstone, nether star, glowstone,
+        string, bow, string,
+        iron ingot, string, iron ingot
+
+on shoot:
+    shooter is a player
+    projectile is an arrow
+    shooter's tool is bow named "§e雷の弓"
+    set {thunder_arrow::%projectile%} to true
+
+every 2 ticks:
+    loop all arrows:
+        if {thunder_arrow::%loop-entity%} is set:
+            spawn 3 of electric_spark particle at loop-entity
+            if loop-entity is on ground or dead:
+                delete {thunder_arrow::%loop-entity%}
+
+on damage of player or mob by projectile:
+    attacker is a player
+    attacker's tool is bow named "§e雷の弓"
+    if projectile is arrow:
+        strike lightning at victim
+        play sound "entity.lightning_bolt.thunder" at victim
+        set damage to 8
