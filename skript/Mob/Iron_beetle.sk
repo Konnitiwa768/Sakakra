@@ -1,0 +1,79 @@
+# --- 召喚：鉄ブロック型ゴーレム構造 ---
+on build:
+    if event-block is iron block:
+        loop blocks in radius 1 around event-block:
+            if loop-block is carved pumpkin:
+                cancel event
+                remove event-block and loop-block
+                spawn spider at location of event-block
+                set {_boss} to last spawned entity
+                set name of {_boss} to "&8鋼の虫・アイアンビートル"
+                set max health of {_boss} to 300
+                set health of {_boss} to 300
+                set attack damage of {_boss} to 11
+                set {_boss} metadata "iron_beetle" to true
+                give {_boss} iron helmet of unbreaking 10
+                give {_boss} iron chestplate of unbreaking 10
+                give {_boss} iron leggings of unbreaking 10
+                give {_boss} iron boots of unbreaking 10
+                create bossbar "&8鋼の虫・アイアンビートル" with color gray and style segmented_10
+                add {_boss} to bossbar
+                loop all players:
+                    add bossbar to loop-player
+
+# --- パッシブ防御効果：常時受けるダメージを軽減 ---
+on damage:
+    victim has metadata "iron_beetle"
+    set damage to damage - 4
+    if damage < 0:
+        cancel event
+
+# --- アイアンラッシュ（ジャンプ突撃） ---
+every 7 to 15 seconds:
+    loop all entities:
+        if loop-entity has metadata "iron_beetle":
+            set {_target} to nearest player to loop-entity within 10
+            if {_target} is set:
+                set velocity of loop-entity to vector from loop-entity to {_target} multiplied by 1.3
+                wait 10 ticks
+                damage {_target} by 8
+                push {_target} upward at speed 0.8
+                send title "&7>> &fアイアンラッシュ！ &7<<" to {_target}
+
+# --- 鉄の鱗粉：ダメージ半減 + スロウ ---
+every 7 to 15 seconds:
+    loop all entities:
+        if loop-entity has metadata "iron_beetle":
+            chance of 50%:
+                apply resistance 1 to loop-entity for 5 seconds
+                loop players in radius 5 around loop-entity:
+                    apply slowness 2 to loop-player for 4 seconds
+                    send title "&7>> &f鉄の鱗粉が舞う！ &7<<" to loop-player
+
+# --- 鉄筋再生（HP100未満で1度だけ） ---
+every 2 seconds:
+    loop all entities:
+        if loop-entity has metadata "iron_beetle":
+            if health of loop-entity <= 100:
+                if loop-entity doesn't have metadata "used_regen":
+                    set health of loop-entity to health of loop-entity + 100
+                    apply resistance 1 to loop-entity for 10 seconds
+                    set metadata "used_regen" of loop-entity to true
+                    broadcast "&8鋼の虫が鉄筋を再構成した！"
+
+# --- ドロップ処理 ---
+on death:
+    entity has metadata "iron_beetle"
+    clear drops
+    set {_r1} to random number between 0 and 100
+    set {_r2} to random number between 0 and 100
+    set {_r3} to random number between 0 and 100
+
+    if {_r1} <= 37.7:
+        drop diamond named "&b鋼結晶" quantity random integer between 12 and 30 at event-location
+    if {_r2} <= 45.6:
+        drop gold ingot named "&6金塊の核" quantity random integer between 20 and 40 at event-location
+    if {_r3} <= 58.1:
+        drop iron ingot named "&7鋼鉄の残骸" quantity random integer between 30 and 64 at event-location
+
+    delete bossbar
