@@ -1,0 +1,27 @@
+# Toxic Scorpion
+command /spawntoxicscorpion:
+    trigger:
+        spawn scorpion at location of player
+        set {_e} to last spawned entity
+        set name of {_e} to "Toxic Scorpion"
+        set {_e}'s max health to 81
+        set {_e}'s health to 81
+        set {_e}'s attack damage to 10
+
+on damage caused by scorpion:
+    attacker is named "Toxic Scorpion"
+    apply poison 4 to victim for 5 seconds
+
+# Wind Scorpion
+command /spawnwindscorpion:
+    trigger:
+        spawn scorpion at location of player
+        set {_e} to last spawned entity
+        set name of {_e} to "Wind Scorpion"
+        set {_e}'s max health to 100
+        set {_e}'s health to 100
+        set {_e}'s attack damage to 5
+
+on damage caused by scorpion:
+    attacker is named "Wind Scorpion"
+    apply weakness 1 to victim for 5 seconds
