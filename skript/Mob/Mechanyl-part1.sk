@@ -1,0 +1,41 @@
+# 火のメカニルを召喚
+command /firemechanyl:
+    trigger:
+        summon mechanyl at player
+        name of last spawned entity to "Mechanyl-Fire"
+        # 火のメカニルをプレイヤーの位置に召喚し、名前を "Mechanyl-Fire" に設定
+        send "火のメカニルが召喚されました！" to player
+
+# 風のメカニルを召喚
+command /windmechanyl:
+    trigger:
+        summon mechanyl at player
+        name of last spawned entity to "Mechanyl-Wind"
+        # 風のメカニルをプレイヤーの位置に召喚し、名前を "Mechanyl-Wind" に設定
+        send "風のメカニルが召喚されました！" to player
+
+# 土のメカニルを召喚
+command /earthmechanyl:
+    trigger:
+        summon mechanyl at player
+        name of last spawned entity to "Mechanyl-Earth"
+        # 土のメカニルをプレイヤーの位置に召喚し、名前を "Mechanyl-Earth" に設定
+        send "土のメカニルが召喚されました！" to player
+
+# 火のメカニル (Mechanyl-Fire) 特性
+on entity damage by entity:
+    if name of event-entity is "Mechanyl-Fire":
+        add fire resistance 1 to event-entity for 10 seconds
+        # 火のメカニルが攻撃されたら火耐性1を10秒間付与する
+
+# 風のメカニル (Mechanyl-Wind) 特性
+on entity damage by entity:
+    if name of event-entity is "Mechanyl-Wind":
+        add slow 2 to event-entity for 10 seconds
+        # 風のメカニルが攻撃されたらスロウ2を10秒間自分にかける
+
+# 土のメカニル (Mechanyl-Earth) 特性
+on entity damage by entity:
+    if name of event-entity is "Mechanyl-Earth":
+        add resistance 2 to event-entity for 10 seconds
+        # 土のメカニルが攻撃されたら耐性2を10秒間自分に付与する
