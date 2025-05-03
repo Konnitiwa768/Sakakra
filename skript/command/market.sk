@@ -1,0 +1,34 @@
+# マーケット価格と対価の定義
+function market price of(id: text) :: objects:
+    if {_id} is "blaze_rod":
+        return "iron_ingot", 30, 3 # 鉄30個で3個
+    if {_id} is "barrier":
+        return "diamond", 2, 8 # ダイヤ2個で1個
+    if {_id} is "phantom_membrane":
+        return "diamond", 1, 1 # ダイヤ1個で1個
+    if {_id} is "heavy_core":
+        return "emerald", 80, 1
+    if {_id} is "nether_star":
+        return "diamond", 15, 1
+    return "air", 0, 0
+
+# マーケットコマンド定義
+command /market <text>:
+    permission: none
+    trigger:
+        set {_id} to arg-1
+        set {_result::*} to market price of {_id}
+        set {_token} to {_result::1}
+        set {_cost} to {_result::2}
+        set {_amount} to {_result::3}
+
+        if {_token} is "air" or {_cost} is 0:
+            send "&c%{_id}% はマーケットで購入できません。"
+            stop
+
+        if player has at least {_cost} of {_token}:
+            remove {_cost} of {_token} from player
+            give {_amount} of {_id} to player
+            send "&a%{_token}% × %{_cost}% で %{_id}% × %{_amount}% を購入しました。"
+        else:
+            send "&c%{_token}% が不足しています。必要数: %{_cost}%"
