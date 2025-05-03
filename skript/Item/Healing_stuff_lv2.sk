@@ -1,0 +1,25 @@
+# --- Healing Stuff Lv1 ---
+
+command /gethealingstufflv2:
+    permission: op
+    trigger:
+        give player stick named "§aHealing Stuff Lv3" with lore "§7しゃがみ右クリックで回復", "§71.5秒クールダウン"
+
+on script load:
+    register new shaped recipe for stick named "§aHealing Stuff Lv2" with lore "§7しゃがみ右クリックで回復", "§71.5秒クールダウン" using:
+        air,  diamond, air,
+        gold ingot, stick, gold ingot,
+        air, gold ingot, air
+
+# 右クリックで回復
+on right click:
+    player is sneaking
+    player's tool is stick named "§aHealing Stuff Lv1"
+    if {healstuff_cd::%player%} is not set:
+        heal player by 5
+        send "§a[+] ヒーリング！" to player
+        set {healstuff_cd::%player%} to true
+        wait 1.5 seconds
+        delete {healstuff_cd::%player%}
+    else:
+        send "&cクールダウン中！" to player
